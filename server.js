@@ -34,7 +34,7 @@
   //? variables
   var appPort = 1337;
   const boards = [0,1];
-  const data = [[1],[2]];
+  const data = [[1,2,3,4],[1,2,3,4]];
   const codes = [[1],[2]];
 
   const getLocalIP = () => {
@@ -126,7 +126,11 @@
 
   app.post("/dataInput",(req,res)=>{
     let boardNumber = req.body["board"];
-    data[boardNumber] = req.body["value"];
+    for(let i = 0; i < 4; i++)
+    {
+      data[boardNumber][i] = req.body["value" + (i+1)];
+      console.log(req.body["value" + (i+1)]);
+    }
     res.end();
   })
 

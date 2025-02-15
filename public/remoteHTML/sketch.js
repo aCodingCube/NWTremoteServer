@@ -72,6 +72,10 @@ function draw() {
   }
 }
 
+fetchDataToServer(primCircle.x - primCircleStart.x, primCircle.y - primCircleStart,
+  secCircle.x - secCircleStart, secCircle.y - secCircleStart.y
+);
+
 // fullscreen
 function mousePressed() {
   if (mouseX > 0 && mouseX < windowWidth && mouseY > 0 && mouseY < windowHeight) {
@@ -99,4 +103,24 @@ function windowResized() {
   primCircle.y = primCircleStart.y;
   secCircle.x = secCircleStart.x;
   secCircle.y = secCircleStart.y;
+}
+
+function fetchDataToServer(value1X,value1Y,value2X,value2Y)
+{
+  const params = new URLSearchParams(window.location.search);
+  const boardNumber = params.get('board');
+
+  fetch("/dataInput",{
+    method: "POST",
+    body: JSON.stringify({
+      board: boardNumber,
+      value1: value1X,
+      value2: value1Y,
+      value3: value2X,
+      value4: value2Y
+    }),
+    headers:{
+      "Content-type": "application/json; charset=UTF-8"
+    }
+  });
 }
