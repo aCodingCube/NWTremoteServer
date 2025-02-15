@@ -11,7 +11,7 @@
   const os = require('node:os');
 
   //? setup / middleware
-  app.use(helmet());
+  app.use(helmet());  
   app.use(cookieParser());
   // for getting data from client
   app.use(bodyParser.json());
@@ -19,17 +19,17 @@
 
   app.use(express.static(path.join(__dirname, 'public')));
 
-  app.use(
-    helmet({
-      contentSecurityPolicy: {
-        directives: {
-          defaultSrc: ["'self'"],
-          scriptSrc: ["'self'", "'unsafe-eval'"], // Erlaubt eval()
-          styleSrc: ["'self'", "'unsafe-inline'"], // Falls du Inline-CSS hast
-        },
-      },
-    })
-  );
+  app.use((req, res, next) => {
+    res.setHeader(
+      'Content-Security-Policy',
+      "default-src 'self'; " +
+      "script-src 'self' 'unsafe-eval' 'unsafe-inline'; " +
+      "style-src 'self' 'unsafe-inline'; " +
+      "worker-src 'self' blob:; " +  // Web Worker erlauben
+      "connect-src 'self' blob:;"    // Blob-URLs erlauben
+    );
+    next();
+  });
 
   //? variables
   var appPort = 1337;
