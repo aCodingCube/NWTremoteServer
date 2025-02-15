@@ -70,11 +70,12 @@ function draw() {
     secCircle.x = secCircleStart.x;
     secCircle.y = secCircleStart.y;
   }
-}
 
-fetchDataToServer(primCircle.x - primCircleStart.x, primCircle.y - primCircleStart,
-  secCircle.x - secCircleStart, secCircle.y - secCircleStart.y
-);
+  fetchDataToServer(primCircle.x - primCircleStart.x, primCircle.y - primCircleStart.y,
+    secCircle.x - secCircleStart.x, secCircle.y - secCircleStart.y
+  );
+
+}
 
 // fullscreen
 function mousePressed() {
@@ -109,6 +110,11 @@ function fetchDataToServer(value1X,value1Y,value2X,value2Y)
 {
   const params = new URLSearchParams(window.location.search);
   const boardNumber = params.get('board');
+
+  value1X = round(value1X);
+  value1Y = round(value1Y);
+  value2X = round(value2X);
+  value2Y = round(value2Y);
 
   fetch("/dataInput",{
     method: "POST",

@@ -126,10 +126,15 @@
 
   app.post("/dataInput",(req,res)=>{
     let boardNumber = req.body["board"];
+    if(req.cookies["AccessCode"] != codes[boardNumber]) 
+    {
+      res.redirect("/remoteAccess");
+      return;
+    }
     for(let i = 0; i < 4; i++)
     {
       data[boardNumber][i] = req.body["value" + (i+1)];
-      console.log(req.body["value" + (i+1)]);
+      //console.log(req.body["value" + (i+1)]);
     }
     res.end();
   })
@@ -141,7 +146,7 @@
       return;
     }
     let boardNumber = req.query["board"];
-    res.json({"value":data[boardNumber]});
+    res.json({"value1":data[boardNumber][0],"value2":data[boardNumber][1],"value3":data[boardNumber][2],"value4":data[boardNumber][3]});
   });
 
   app.all("*",(req,res)=>{
