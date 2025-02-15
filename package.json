@@ -1,0 +1,24 @@
+{
+  "name": "nwtremoteserver",
+  "version": "1.0.0",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "cookie-parser": "^1.4.7",
+    "crypto": "^1.0.1",
+    "express": "^4.21.2",
+    "fs": "^0.0.1-security",
+    "helmet": "^8.0.0",
+    "lowdb": "^7.0.1",
+    "os": "^0.1.2",
+    "path": "^0.12.7"
+  }
+}
