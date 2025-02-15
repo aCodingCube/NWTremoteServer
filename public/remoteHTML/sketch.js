@@ -47,18 +47,18 @@ function draw() {
       primCircleMod = true;
       let angle = atan2(touch.y - primCircleStart.y,touch.x - primCircleStart.x);
       let distance = dist(touch.x,touch.y, primCircleStart.x,primCircleStart.y);
-      let mult = constrain(distance,0,maxTouchR);
-      primCircle.x = primCircleStart.x + cos(angle) * mult;
-      primCircle.y = primCircleStart.y + sin(angle) * mult;
+      let factor = constrain(distance,0,maxTouchR);
+      primCircle.x = primCircleStart.x + cos(angle) * factor;
+      primCircle.y = primCircleStart.y + sin(angle) * factor;
     }
     // move circle until r
     if (touch.x > (windowWidth/2)) {
       secCircleMod = true;
       let angle = atan2(touch.y - secCircleStart.y,touch.x - secCircleStart.x);
       let distance = dist(touch.x,touch.y, secCircleStart.x,secCircleStart.y);
-      let mult = constrain(distance,0,maxTouchR);
-      secCircle.x = secCircleStart.x + cos(angle) * mult;
-      secCircle.y = secCircleStart.y + sin(angle) * mult;
+      let factor = constrain(distance,0,maxTouchR);
+      secCircle.x = secCircleStart.x + cos(angle) * factor;
+      secCircle.y = secCircleStart.y + sin(angle) * factor;
     }
   }
   
@@ -82,7 +82,7 @@ function mousePressed() {
 // resize everything on resive (fullscreen)
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
-  background("gray");
+  background("#808080");
 
   // Bildschirmabhängige Variablen neu setzen
   primCircleStart.x = windowWidth/4;

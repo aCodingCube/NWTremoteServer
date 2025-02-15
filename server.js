@@ -19,10 +19,17 @@
 
   app.use(express.static(path.join(__dirname, 'public')));
 
-  app.use((req, res, next) => {
-    res.set('Content-Security-Policy', "script-src 'self'"); // Allow scripts from the same domain
-    next();
-  });
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'", "'unsafe-eval'"], // Erlaubt eval()
+          styleSrc: ["'self'", "'unsafe-inline'"], // Falls du Inline-CSS hast
+        },
+      },
+    })
+  );
 
   //? variables
   var appPort = 1337;
