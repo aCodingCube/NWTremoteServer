@@ -128,5 +128,20 @@ function fetchDataToServer(value1X,value1Y,value2X,value2Y)
     headers:{
       "Content-type": "application/json; charset=UTF-8"
     }
-  });
+  }).then(response => {
+      // Prüfe auf serverseitige Redirects
+      if (response.redirected) {
+          window.location.href = response.url; // Automatische Weiterleitung
+          return;
+      }
+
+      // Prüfe auf JSON-Antwort mit Redirect
+      return response.json();
+  })
+  .then(data => {
+      if (data && data.redirect) {
+          window.location.href = data.redirect; // Manuelles Weiterleiten
+      }
+  })
+  .catch(error => console.error("Fehler beim Senden des Requests:", error));
 }

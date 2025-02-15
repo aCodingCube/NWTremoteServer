@@ -35,7 +35,7 @@
   var appPort = 1337;
   const boards = [0,1];
   const data = [[1,2,3,4],[1,2,3,4]];
-  const codes = [[1],[2]];
+  const codes = [1,2];
 
   const getLocalIP = () => {
     let result = false;
@@ -84,7 +84,16 @@
   //* routing
 
   app.get("/",(req,res)=>{
-      res.send("Main root");
+      res.send("<h1>Main root! Custom server made by Lorenz :)</h1>");
+  });
+
+  app.get("/admin",(req,res)=>{
+    res.sendFile(path.join(__dirname,'public','adminHTML','index.html'));
+  })
+
+  app.post("/adminInput",(req,res)=>{
+    let boardNumber = req.body["board"];
+    codes[boardNumber] = 0;
   });
 
   app.get("/remoteAccess",(req,res)=>{
@@ -128,13 +137,12 @@
     let boardNumber = req.body["board"];
     if(req.cookies["AccessCode"] != codes[boardNumber]) 
     {
-      res.redirect("/remoteAccess");
+      res.json({ redirect: "/remoteAccess" });
       return;
     }
     for(let i = 0; i < 4; i++)
     {
       data[boardNumber][i] = req.body["value" + (i+1)];
-      //console.log(req.body["value" + (i+1)]);
     }
     res.end();
   })
