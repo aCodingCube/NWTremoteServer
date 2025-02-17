@@ -4,15 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Remote Access</title>
-    <script src="/formHTML/script.js"></script>
-    <!-- <script src="script.js"></script> -->
-    <link rel="stylesheet" type="text/css" href="/formHTML/style.css" />
-    <!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
+    <!-- <script src="/formHTML/script.js"></script> -->
+    <script src="script.js"></script>
+    <!-- <link rel="stylesheet" type="text/css" href="/formHTML/style.css" /> -->
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-    <h1> Remote Access </h1>
-    <br>
-    <input placeholder="Enter board-number: " id="input"></input>
-    <button id="submitButton"> Ok </button>
+    <div id="layout">
+        <div id="shadowPlane"> </div>
+        <div id="plane">
+            <div id="mainLayout">
+                <h1 id="heading"> Remote Access </h1>
+                <h4 id="subHeading">Access to the car remotes</h4>
+                <div id="inputLayout">
+                    <input placeholder="Enter board-number: " id="input"></input>
+                    <button id="submitButton"> Confirm </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
