@@ -4,10 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin-Page</title>
-    <script src="/adminHTML/script.js"></script>
+    <!-- <script src="/adminHTML/script.js"></script>
+    <link rel="stylesheet" type="text/css" href="/formHTML/style.css" /> -->
+    <script src="script.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-    <button id="btn1">Kick device No.0!</button>
-    <button id="btn2">Kick device No.1!</button>
+    <div id="layout">
+        <div id="shadowPlane"> </div>
+        <div id="plane">
+            <div id="mainLayout">
+                <h1 id="heading"> Admin-Page </h1>
+                <h4 id="subHeading">Choose board to kick device connection!</h4>
+                <div id="inputLayout">
+                    <button id="btn1" class="submitButton">Kick device No.0!</button>
+                    <button id="btn2" class="submitButton">Kick device No.1!</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
