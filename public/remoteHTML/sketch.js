@@ -12,7 +12,7 @@ let vertDrawSwitch;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  background("gray");
+  background("#d62828"); // dunkel blau
 
   // setting start values
   primCircleStart = createVector(windowWidth/4,windowHeight/2);
@@ -26,8 +26,10 @@ function setup() {
   maxTouchR = windowWidth / 7;
 
   returnText = createDiv("Please turn the device!");
-  returnText.style('font-size', '6vw');
-  returnText.style('color', 'white');
+  returnText.style('font-size', '12vw');
+  returnText.style('font-weight','bold');
+  returnText.style('font-family','sans-serif');
+  returnText.style('color', '#EAEAEA');
   returnText.style('font-weight', 'bold');
   returnText.style('text-align', 'center');
   returnText.style('position', 'absolute');
@@ -40,8 +42,8 @@ function setup() {
     fullscreen(false);
   });
   returnBtn.style('font-weight','bold');
-  returnBtn.style('background-color', '#007BFF');
-  returnBtn.style('color', 'white');
+  returnBtn.style('background-color', '#003049');
+  returnBtn.style('color', '#EAEAEA');
   returnBtn.style('border', 'none');
   returnBtn.style('cursor', 'pointer');
   returnBtn.hide();
@@ -62,10 +64,10 @@ function draw() {
     vertDrawSwitch = false;
 
     returnText.show();
-    returnText.style('font-size', '6vw');
+    returnText.style('font-size', '12vw');
     returnText.style('text-align', 'center');
     returnText.style('position', 'absolute');
-    returnText.style('top', height / 2 - returnText.elt.offsetHeight / 2 + "px");
+    returnText.style('top', height / 2 - returnText.elt.offsetHeight / 2 - 60 + "px");
     returnText.style('left', width / 2 - returnText.elt.offsetWidth / 2 + "px");
 
     returnBtn.show();
@@ -83,17 +85,17 @@ function draw() {
   returnText.hide();
   returnBtn.hide();
 
-  background("gray");
+  background("#003049"); // dunkel blau
 
   // background circles
-  fill("orange");
+  fill("#C0D6DF"); // hell-blau
   ellipse(primCircleStart.x,primCircleStart.y, circleR + circleBackgroundMod);
   ellipse(secCircleStart.x,secCircleStart.y, circleR + circleBackgroundMod);
 
   // main circles
-  fill("red");
+  fill("#D62828"); // red
   ellipse(primCircle.x,primCircle.y, circleR);
-  fill("green");
+  fill("#F77F00"); // orange
   ellipse(secCircle.x,secCircle.y, circleR);
 
   // logic
@@ -150,7 +152,15 @@ function mousePressed() {
 // resize everything on resive (fullscreen)
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
-  background("#808080");
+
+  if(windowHeight > windowWidth)
+  {
+    background("#D62828"); // rot
+  }
+  else
+  {
+    background("#003049"); // dunkel-blau
+  }
 
   // Bildschirmabhängige Variablen neu setzen
   primCircleStart.x = windowWidth/4;
