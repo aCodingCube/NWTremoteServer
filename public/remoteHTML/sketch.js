@@ -6,6 +6,9 @@ let normSecCircle;
 let primCircleStart;
 let secCircleStart;
 let circleR, circleBackgroundMod, maxTouchR;
+let returnBtn;
+let returnText;
+let vertDrawSwitch;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -21,9 +24,65 @@ function setup() {
   circleR = windowHeight / 6;
   circleBackgroundMod = windowHeight / 8;
   maxTouchR = windowWidth / 7;
+
+  returnText = createDiv("Please turn the device!");
+  returnText.style('font-size', '6vw');
+  returnText.style('color', 'white');
+  returnText.style('font-weight', 'bold');
+  returnText.style('text-align', 'center');
+  returnText.style('position', 'absolute');
+  returnText.hide();
+
+  returnBtn = createButton("Return to access-point!");
+  returnBtn.mousePressed(() => {
+    remove();
+    setTimeout(()=>{window.location.replace("/remoteAccess");}, 50);
+    fullscreen(false);
+  });
+  returnBtn.style('font-weight','bold');
+  returnBtn.style('background-color', '#007BFF');
+  returnBtn.style('color', 'white');
+  returnBtn.style('border', 'none');
+  returnBtn.style('cursor', 'pointer');
+  returnBtn.hide();
+
+  vertDrawSwitch = true;
 }
 
 function draw() {
+
+  if(windowHeight > windowWidth)
+  {
+
+
+    if(!vertDrawSwitch)
+    {return;}
+
+    windowResized();
+    vertDrawSwitch = false;
+
+    returnText.show();
+    returnText.style('font-size', '6vw');
+    returnText.style('text-align', 'center');
+    returnText.style('position', 'absolute');
+    returnText.style('top', height / 2 - returnText.elt.offsetHeight / 2 + "px");
+    returnText.style('left', width / 2 - returnText.elt.offsetWidth / 2 + "px");
+
+    returnBtn.show();
+    returnBtn.size(windowWidth /2, windowHeight/8);
+    returnBtn.position(width / 2 - returnBtn.width / 2, height / 2 + 100);
+    returnBtn.style('font-size', '6vw');
+    returnBtn.style('border-radius', '8px');
+    returnBtn.style('text-align','center');
+
+
+    return;
+  }
+
+  vertDrawSwitch = true;
+  returnText.hide();
+  returnBtn.hide();
+
   background("gray");
 
   // background circles
@@ -79,6 +138,10 @@ function draw() {
 
 // fullscreen
 function mousePressed() {
+  if(windowHeight > windowWidth)
+  {
+    return;
+  }
   if (mouseX > 0 && mouseX < windowWidth && mouseY > 0 && mouseY < windowHeight) {
     fullscreen(true);
   }
