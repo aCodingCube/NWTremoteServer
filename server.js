@@ -84,7 +84,7 @@
   //* routing
 
   app.get("/",(req,res)=>{
-      res.send("<h1>Main root! Custom server made by Lorenz :)</h1>");
+      res.send("<h1>Main root! Go to /remote :)</h1>");
   });
 
   app.get("/admin",(req,res)=>{
