@@ -37,6 +37,9 @@
   const data = [[1,2,3,4],[1,2,3,4]];
   const codes = [1,2];
 
+  const timeout = [false,false];
+  const TIMEOUT_DURATION = 1000;
+
   const getLocalIP = () => {
     let result = false;
     const networkInterfaces = os.networkInterfaces();
@@ -79,6 +82,15 @@
     console.log("Network Interfaces:", networkInterfaces);
     console.log("No IP was found!");
     return null; // Only return null if **no valid IPs** were found
+  };
+
+  const handleTimeout = (boardNumber) => {
+    timeout[boardNumber] = false;
+    
+    for(let i = 0; i < 4; i++)
+    {
+      data[boardNumber][i] = 0;
+    }
   };
 
   //* routing
@@ -145,6 +157,13 @@
       data[boardNumber][i] = req.body["value" + (i+1)];
     }
     res.end();
+
+    if(timeout[boardNumber])
+    {
+      clearTimeout(timeout[boardNumber]);
+    }
+
+    timeout[boardNumber] = setTimeout(() => handleTimeout(boardNumber),TIMEOUT_DURATION);
   })
 
   app.get("/data",(req,res)=>{
