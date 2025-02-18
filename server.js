@@ -22,11 +22,7 @@
   app.use((req, res, next) => {
     res.setHeader(
       'Content-Security-Policy',
-      "default-src 'self'; " +
-      "script-src 'self' 'unsafe-eval' 'unsafe-inline'; " +
-      "style-src 'self' 'unsafe-inline'; " +
-      "worker-src 'self' blob:; " +  // Web Worker erlauben
-      "connect-src 'self' blob:;"    // Blob-URLs erlauben
+      "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:; connect-src 'self' blob:;"
     );
     next();
   });
@@ -156,7 +152,6 @@
     {
       data[boardNumber][i] = req.body["value" + (i+1)];
     }
-    res.end();
 
     if(timeout[boardNumber])
     {
@@ -164,6 +159,8 @@
     }
 
     timeout[boardNumber] = setTimeout(() => handleTimeout(boardNumber),TIMEOUT_DURATION);
+
+    res.end();
   })
 
   app.get("/data",(req,res)=>{
