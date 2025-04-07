@@ -9,23 +9,33 @@
   const crypto = require("crypto");
   const dns = require('node:dns');
   const os = require('node:os');
-  const cluster = require("cluster");
 
-  //* cluster setup
-  const numCPUs = os.cpus().length;
+  //? setup / middleware
+  app.use(helmet());  
+  app.use(cookieParser());
+  // for getting data from client
+  app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({extended: true}));
 
-  if(cluster.isMaster){
-    console.log(`Master-Prozess läuft mit PID ${process.pid}`);
-    for(let i = 0; i < numCPUs; i++)
-    {
-      cluster.fork();
-    }
-    
-    cluster.on("exit",(worker,code,signal)=>{
-      console.log(`Worker ${worker.process.pid} ist gestorben`);
-    })
+  app.use(express.static(path.join(__dirname, 'public')));
 
-      // setup -run once
+  app.use((req, res, next) => {
+    res.setHeader(
+      'Content-Security-Policy',
+      "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:; connect-src 'self' blob:;"
+    );
+    next();
+  });
+
+  //? variables
+  var appPort = 1337;
+  const boards = [0,1];
+  const data = [[1,2,3,4],[1,2,3,4]];
+  const codes = [1,2];
+
+  const timeout = [false,false];
+  const TIMEOUT_DURATION = 1000;
+
   const getLocalIP = () => {
     let result = false;
     const networkInterfaces = os.networkInterfaces();
@@ -69,43 +79,6 @@
     console.log("No IP was found!");
     return null; // Only return null if **no valid IPs** were found
   };
-  console.log("---------------------------------------");
-  console.log("-> use /remoteAccess for remote-control");
-  console.log("-> use /data?board=n for recieving data");
-  getLocalIP();
-  console.log("");
-  console.log("Server is listening on port " + 1337);
-  console.log("---------------------------------------");
-  console.log("=>");
-
-  } else {
-    console.log(`Worker-Prozess läuft mit PID ${process.pid}`);
-    
-  //? setup / middleware
-  app.use(helmet());  
-  app.use(cookieParser());
-  // for getting data from client
-  app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({extended: true}));
-
-  app.use(express.static(path.join(__dirname, 'public')));
-
-  app.use((req, res, next) => {
-    res.setHeader(
-      'Content-Security-Policy',
-      "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:; connect-src 'self' blob:;"
-    );
-    next();
-  });
-
-  //? variables
-  var appPort = 1337;
-  const boards = [0,1];
-  const data = [[1,2,3,4],[1,2,3,4]];
-  const codes = [1,2];
-
-  const timeout = [false,false];
-  const TIMEOUT_DURATION = 1000;
 
   const handleTimeout = (boardNumber) => {
     timeout[boardNumber] = false;
@@ -206,4 +179,9 @@
 
   //? start server
   app.listen(appPort);
-  }
+  console.log("---------------------------------------");
+  console.log("Server is listening on port " + appPort);
+  console.log("-> use /remoteAccess for remote-control");
+  console.log("-> use /data?board=n for recieving data");
+  console.log("---------------------------------------");
+  getLocalIP();
