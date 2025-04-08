@@ -37,6 +37,7 @@
   const timeout = [false,false];
   const TIMEOUT_DURATION = 1000;
 
+  //* IP-Stuff
   const getLocalIP = () => {
     let result = false;
     const networkInterfaces = os.networkInterfaces();
@@ -81,6 +82,8 @@
     return null; // Only return null if **no valid IPs** were found
   };
 
+  //* Timeout handle (if user using remote is going inactive)
+
   const handleTimeout = (boardNumber) => {
     timeout[boardNumber] = false;
     
@@ -92,6 +95,7 @@
 
   //* routing
 
+  //* main
   app.get("/",(req,res)=>{
       res.send(
         "<h1>Main root! :)</h1>" + 
@@ -102,21 +106,19 @@
       );
   });
 
+  //* admin
+  // get
   app.get("/admin",(req,res)=>{
     res.sendFile(path.join(__dirname,'public','adminHTML','index.html'));
   })
-
+  // post
   app.post("/adminInput",(req,res)=>{
     let boardNumber = req.body["board"];
     codes[boardNumber] = 0;
   });
 
-  app.post("/controlInput",(req,res)=>{
-    let boardNumber = parseInt(req.body["board"]);
-    mode[boardNumber] = parseInt(req.body["mode"]);
-    return;
-  });
-
+  //* driving-mode control
+  // get
   app.get("/modeControl",(req,res)=>{
     let boardNumber = parseInt(req.query["board"]);
     if(boardNumber == undefined || Number.isNaN(boardNumber))
@@ -128,6 +130,16 @@
     res.sendFile(path.join(__dirname,'public','controlHTML','index.html'))
   })
 
+  // post
+  app.post("/controlInput",(req,res)=>{
+    let boardNumber = parseInt(req.body["board"]);
+    mode[boardNumber] = parseInt(req.body["mode"]);
+    return;
+  });
+
+  //* remote
+  
+  // get (remoteAccess) -> user creating session and id
   app.get("/remoteAccess",(req,res)=>{
     let boardNumber = parseInt(req.query["board"]);
     if(boardNumber == undefined || Number.isNaN(boardNumber)) {
@@ -136,11 +148,11 @@
     }
 
     if(boards.includes(boardNumber) == false)
-    {
+      {
       res.redirect("/remoteAccess");
       return;
     }
-
+    
     let secureRandom = crypto.randomInt(0,1000000);
     let secureCode = secureRandom.toString().padStart(6, "0");
     codes[boardNumber] = secureCode;
@@ -148,6 +160,7 @@
     res.redirect("/remote?board=" + boardNumber);
   });
 
+  // get (remote) -> user entering remote using session id
   app.get("/remote",(req,res)=>{
     let boardNumber = parseInt(req.query["board"]);
     if(boardNumber == undefined || Number.isNaN(boardNumber)) {
@@ -165,6 +178,7 @@
     return;
   });
 
+  // post -> recieving data from remote
   app.post("/dataInput",(req,res)=>{
     let boardNumber = req.body["board"];
     if(req.cookies["AccessCode"] != codes[boardNumber]) 
@@ -187,6 +201,8 @@
     res.end();
   })
 
+  //* data
+  // get -> arduino requesting data
   app.get("/data",(req,res)=>{
     if(req.query["board"] == undefined) 
     {
@@ -197,6 +213,8 @@
     res.json({"value1":data[boardNumber][0],"value2":data[boardNumber][1],"value3":data[boardNumber][2],"value4":data[boardNumber][3],"mode":mode[boardNumber]});
   });
 
+  //* 404
+  // get 404 page
   app.all("*",(req,res)=>{
       res.send("<h1>Error: 404 Page not found!</h1>");
   });
