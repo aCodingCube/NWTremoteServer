@@ -1,0 +1,128 @@
+/*
+Color-Pallete:
+003049
+d62828
+f77f00
+c0d6df
+eaeaea
+https://coolors.co/003049-d62828-f77f00-c0d6df-eaeaea
+
+*/
+
+body{
+    /* background-color: #c0d6df; */
+    background-color: #003049;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#layout{
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+#shadowPlane{
+    /* background-color: #555d61; */
+    background-color: #f77f00;
+    position: absolute;
+    width: 85%;
+    height: 85%;
+    z-index: -1;
+    margin-top: 2.5%;
+    margin-left: 4.5%;
+    border-radius: 0.625rem;
+    padding: 1.25rem;
+
+    box-shadow: 0px 0.25rem 1.25rem rgba(0,0,0,0.2);
+}
+
+#plane{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #d62828;
+    width: 85%;
+    height: 85%;
+    border-radius: 0.625rem;
+    padding: 1.25rem;
+
+    box-shadow: 0px 0.25rem 1.25rem rgba(0,0,0,0.2);
+}
+
+#mainLayout{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#heading{
+    font-size: 450%;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    color:#eaeaea;
+    margin: 0;
+}
+
+#subHeading{
+    font-size: 200%;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    color: #c0d6df;
+    margin: 0;
+    margin-bottom: 5%;
+}
+
+#inputLayout{
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    flex-direction: row;
+    gap: 1rem
+}
+
+.submitButton{
+    background-color: #eaeaea;
+    color: #003049;
+    border: 2px solid #eaeaea;
+    border-radius: 8px;
+    padding: 0.5rem;
+    font-size: 1rem;
+
+    transition-duration: 10ms;
+}
+
+.submitButton:hover{
+    background-color: #C0D6DF;
+    color: black;
+    border-color: #003049;
+}
+
+.submitButton:active{
+    background-color: #D62828;
+    color: #EAEAEA;
+    border-color: #EAEAEA;
+}
+
+.submitButton:focus:hover{
+    background-color: #D62828;
+    color: #EAEAEA;
+    border-color: #EAEAEA;
+}
+
+.submitButton:focus:not(:active){
+    background-color: #eaeaea;
+    color: #003049;
+    border-color: #eaeaea;
+    transition-duration: 0.5s;
+}

@@ -31,6 +31,7 @@
   var appPort = 1337;
   const boards = [0,1];
   const data = [[1,2,3,4],[1,2,3,4]];
+  const mode = [0,0];
   const codes = [1,2];
 
   const timeout = [false,false];
@@ -92,7 +93,13 @@
   //* routing
 
   app.get("/",(req,res)=>{
-      res.send("<h1>Main root! Go to /remote :)</h1>");
+      res.send(
+        "<h1>Main root! :)</h1>" + 
+        "<h2>-> use /remote for remote-control</h2>" + 
+        "<h2>-> use /data?board=n for recieving</h2>" + 
+        "<h2>-> use /modeControl?board=n to change the driving</h2>" + 
+        "<h2>-> use /admin to kick controlling devices</h2>"
+      );
   });
 
   app.get("/admin",(req,res)=>{
@@ -103,6 +110,23 @@
     let boardNumber = req.body["board"];
     codes[boardNumber] = 0;
   });
+
+  app.post("/controlInput",(req,res)=>{
+    let boardNumber = parseInt(req.body["board"]);
+    mode[boardNumber] = parseInt(req.body["mode"]);
+    return;
+  });
+
+  app.get("/modeControl",(req,res)=>{
+    let boardNumber = parseInt(req.query["board"]);
+    if(boardNumber == undefined || Number.isNaN(boardNumber))
+    {
+      res.send("Missing board number!");
+      return;
+    }
+
+    res.sendFile(path.join(__dirname,'public','controlHTML','index.html'))
+  })
 
   app.get("/remoteAccess",(req,res)=>{
     let boardNumber = parseInt(req.query["board"]);
@@ -170,7 +194,7 @@
       return;
     }
     let boardNumber = req.query["board"];
-    res.json({"value1":data[boardNumber][0],"value2":data[boardNumber][1],"value3":data[boardNumber][2],"value4":data[boardNumber][3]});
+    res.json({"value1":data[boardNumber][0],"value2":data[boardNumber][1],"value3":data[boardNumber][2],"value4":data[boardNumber][3],"mode":mode[boardNumber]});
   });
 
   app.all("*",(req,res)=>{
@@ -181,7 +205,9 @@
   app.listen(appPort);
   console.log("---------------------------------------");
   console.log("Server is listening on port " + appPort);
-  console.log("-> use /remoteAccess for remote-control");
+  console.log("-> use /remote for remote-control");
   console.log("-> use /data?board=n for recieving data");
+  console.log("-> use /modeControl?board=n to change the driving mode");
+  console.log("-> use /admin to kick controlling devices");
   console.log("---------------------------------------");
   getLocalIP();
