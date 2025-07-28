@@ -3,10 +3,10 @@ window.addEventListener("DOMContentLoaded",function(){
     console.log("Server made by Lorenz :)");
 
     let btn = this.document.getElementById("submitButton");
-    btn.addEventListener("click",()=>fetchCommand(
+    btn.addEventListener("click",()=> {fetchCommand(
       getParam(),
-      document.getElementById("textInput").value
-    ));
+      document.getElementById("input").value
+    )});
 })
 
 function getParam()
@@ -18,6 +18,7 @@ function getParam()
 function fetchCommand(boardNumber,drivingMode)
 {
   alert("Data send!");
+  alert(drivingMode);
 
   fetch("/controlInput",{
       method: "POST",
@@ -28,5 +29,7 @@ function fetchCommand(boardNumber,drivingMode)
       headers:{
         "Content-type": "application/json; charset=UTF-8"
       }
-    });
+  });
+
+  setTimeout(()=>{window.location.replace("/remote?board=" + boardNumber);}, 500);
 }

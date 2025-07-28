@@ -28,9 +28,11 @@ function setup() {
 
   modeBtn = createButton("Change driving mode!");
   modeBtn.mousePressed(() => {
+    remove();
     let params = new URLSearchParams(window.location.search);
     let boardNumber = params.get("board");
     setTimeout(()=>{window.location.replace("/modeControl?board=" + boardNumber);}, 50);
+    fullscreen(false);
   });
   modeBtn.style('font-weight','bold');
   modeBtn.style('background-color', '#003049');
@@ -73,14 +75,14 @@ function draw() {
 
 
     if(!vertDrawSwitch)
-    {return;}
+    {return;}    
 
     windowResized();
     vertDrawSwitch = false;
 
     modeBtn.show();
     modeBtn.size(windowWidth /2, windowHeight/8);
-    modeBtn.position(width / 2 - modeBtn.width / 2, height / 2 - 700);
+    modeBtn.position(width / 2 - modeBtn.width / 2, height * 0.1);
     modeBtn.style('font-size', '6vw');
     modeBtn.style('border-radius', '8px');
     modeBtn.style('text-align','center');
@@ -94,7 +96,7 @@ function draw() {
 
     returnBtn.show();
     returnBtn.size(windowWidth /2, windowHeight/8);
-    returnBtn.position(width / 2 - returnBtn.width / 2, height / 2 + 100);
+    returnBtn.position(width / 2 - returnBtn.width / 2, height * 0.8 - returnBtn.height);
     returnBtn.style('font-size', '6vw');
     returnBtn.style('border-radius', '8px');
     returnBtn.style('text-align','center');
