@@ -9,6 +9,7 @@ let circleR, circleBackgroundMod, maxTouchR;
 let returnBtn;
 let returnText;
 let vertDrawSwitch;
+let modeBtn;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -24,6 +25,20 @@ function setup() {
   circleR = windowHeight / 6;
   circleBackgroundMod = windowHeight / 8;
   maxTouchR = windowWidth / 7;
+
+  modeBtn = createButton("Change driving mode!");
+  modeBtn.mousePressed(() => {
+    let params = new URLSearchParams(window.location.search);
+    let boardNumber = params.get("board");
+    setTimeout(()=>{window.location.replace("/modeControl?board=" + boardNumber);}, 50);
+  });
+  modeBtn.style('font-weight','bold');
+  modeBtn.style('background-color', '#003049');
+  modeBtn.style('color', '#EAEAEA');
+  modeBtn.style('border', 'none');
+  modeBtn.style('cursor', 'pointer');
+  modeBtn.hide();
+
 
   returnText = createDiv("Please turn the device!");
   returnText.style('font-size', '12vw');
@@ -63,6 +78,13 @@ function draw() {
     windowResized();
     vertDrawSwitch = false;
 
+    modeBtn.show();
+    modeBtn.size(windowWidth /2, windowHeight/8);
+    modeBtn.position(width / 2 - modeBtn.width / 2, height / 2 - 700);
+    modeBtn.style('font-size', '6vw');
+    modeBtn.style('border-radius', '8px');
+    modeBtn.style('text-align','center');
+
     returnText.show();
     returnText.style('font-size', '12vw');
     returnText.style('text-align', 'center');
@@ -84,6 +106,7 @@ function draw() {
   vertDrawSwitch = true;
   returnText.hide();
   returnBtn.hide();
+  modeBtn.hide();
 
   background("#003049"); // dunkel blau
 
