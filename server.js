@@ -148,9 +148,9 @@
       return;
     }
 
-    if(boards.includes(boardNumber) == false)
+    if(boards.includes(boardNumber) == false) // boardnumber not valid
       {
-      res.redirect("/remoteAccess");
+      res.redirect("/remoteAccess?error=boardNumber is not valid!");
       return;
     }
     
