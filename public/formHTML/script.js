@@ -13,9 +13,22 @@ window.addEventListener("DOMContentLoaded",function(){
 
 function submitBoardNumber()
 {
+    let number = document.getElementById("input").value;
+    alert(number);
+
+    if(isNaN(number))
+    {
+        return;
+    }
+
+    if(number == "" || number == null || number == undefined)
+    {
+        return;
+    }
+
     console.log("Data was submited!");
     alert("Tap on the screen for entering fullscreen!");
-    let number = document.getElementById("input").value;
+    
     let pageURL = new URL(window.location.href);
     pageURL.searchParams.append('board',number);
     window.location.replace(pageURL);
