@@ -109,7 +109,7 @@
   });
 
   //* admin
-  // get
+  // get //Todo add option to see all connections
   app.get("/admin",(req,res)=>{
     res.sendFile(path.join(__dirname,'public','adminHTML','index.html'));
   })
@@ -150,7 +150,7 @@
 
   //* remote
   
-  // get (remoteAccess) -> user creating session and id
+  // get (remoteAccess) -> user creating session and id //Todo Remove connection kicking
   app.get("/remoteAccess",(req,res)=>{
     let boardNumber = parseInt(req.query["board"]);
     if(boardNumber == undefined || Number.isNaN(boardNumber)) {
@@ -164,6 +164,8 @@
       return;
     }
     
+    //Todo check if a device is already connected
+
     let secureRandom = crypto.randomInt(0,1000000);
     let secureCode = secureRandom.toString().padStart(6, "0");
     codes[boardNumber] = secureCode;
