@@ -91,38 +91,25 @@ body{
     gap: 1rem
 }
 
-.submitButton{
+#input{
     background-color: #eaeaea;
     color: #003049;
     border: 2px solid #eaeaea;
     border-radius: 8px;
     padding: 0.5rem;
     font-size: 1rem;
-
-    transition-duration: 10ms;
+    transition: 0.5s;
 }
 
-.submitButton:hover{
-    background-color: #C0D6DF;
-    color: black;
-    border-color: #003049;
-}
+#input:focus{
+    outline: none;
+}   
 
-.submitButton:active{
-    background-color: #D62828;
-    color: #EAEAEA;
-    border-color: #EAEAEA;
-}
-
-.submitButton:focus:hover{
-    background-color: #D62828;
-    color: #EAEAEA;
-    border-color: #EAEAEA;
-}
-
-.submitButton:focus:not(:active){
+#submitButton{
     background-color: #eaeaea;
     color: #003049;
-    border-color: #eaeaea;
-    transition-duration: 0.5s;
+    border: 2px solid #eaeaea;
+    border-radius: 8px;
+    padding: 0.5rem;
+    font-size: 1rem;
 }

@@ -7,6 +7,23 @@ window.addEventListener("DOMContentLoaded",function(){
       getParam(),
       document.getElementById("input").value
     )});
+
+    document.getElementById("input").addEventListener("keydown",function(event) {
+        if(event.key === "Enter")
+        {
+            fetchCommand(
+              getParam(),
+              document.getElementById("input").value
+            )
+        }
+    });
+
+    let params = new URLSearchParams(window.location.search);
+    let error = params.get("error");
+    if(error)
+    {
+        this.alert(error);
+    }
 })
 
 function getParam()
@@ -17,8 +34,21 @@ function getParam()
 
 function fetchCommand(boardNumber,drivingMode)
 {
-  alert("Data send!");
-  alert(drivingMode);
+    if(isNaN(drivingMode))
+    {
+        alert("The input has to be a valid number! Test!");
+        document.getElementById("input").value = null;
+        document.getElementById("input").focus();
+        return;
+    }
+
+    if(drivingMode === "" || drivingMode === null || drivingMode === undefined)
+    {
+        document.getElementById("input").value = null;
+        document.getElementById("input").focus();
+        alert("The input has to be a valid number!");
+        return;
+    }
 
   fetch("/controlInput",{
       method: "POST",
@@ -31,5 +61,5 @@ function fetchCommand(boardNumber,drivingMode)
       }
   });
 
-  setTimeout(()=>{window.location.replace("/remote?board=" + boardNumber);}, 500);
+  alert("Driving-Mode changed!");
 }

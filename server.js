@@ -32,6 +32,7 @@
   var appPort = 1337;
   const boards = [0,1];
   const data = [[1,2,3,4],[1,2,3,4]];
+  const possibleModes = [0,1,2];
   const mode = [0,0];
   const codes = [1,2];
 
@@ -134,7 +135,16 @@
   // post
   app.post("/controlInput",(req,res)=>{
     let boardNumber = parseInt(req.body["board"]);
-    mode[boardNumber] = parseInt(req.body["mode"]);
+    let modeNumber = parseInt(req.body["mode"]);
+
+    if(!possibleModes.includes(modeNumber))
+    {
+      console.log("Error!!");
+      res.redirect("/modeControl?board=" + boardNumber +"&error=Invalid mode number. Valid are 0,1,2!");
+      return;
+    }
+    mode[boardNumber] = modeNumber;
+    res.redirect("/remote?board=" + boardNumber);
     return;
   });
 
