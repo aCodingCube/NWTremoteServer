@@ -19,6 +19,8 @@
 
   app.use(express.static(path.join(__dirname, 'public')));
 
+  app.set("view engine", "ejs");
+
   app.use((req, res, next) => {
   res.setHeader(
     'Content-Security-Policy',
@@ -114,7 +116,7 @@
   //* admin
   // get //Todo add option to see all connections
   app.get("/admin",(req,res)=>{
-    res.sendFile(path.join(__dirname,'public','adminHTML','index.html'));
+    res.sendFile(path.join(__dirname,'public','adminHTML','index.ejs'));
   })
   // post
   app.post("/adminInput",(req,res)=>{
@@ -132,7 +134,7 @@
       return;
     }
 
-    res.sendFile(path.join(__dirname,'public','controlHTML','index.html'))
+    res.sendFile(path.join(__dirname,'public','controlHTML','index.ejs'))
   })
 
   // post
@@ -160,7 +162,7 @@
 
     // no board-number specified? -> show form
     if(boardNumber == undefined || Number.isNaN(boardNumber)) {
-      res.sendFile(path.join(__dirname,'public','formHTML','index.html'));
+      res.sendFile(path.join(__dirname,'public','formHTML','index.ejs'));
       return;
     }
 
@@ -172,11 +174,10 @@
     }
     
     // already a board connected? -> back to form
-    console.log("Test -174: " + codes[boardNumber]);
     if(codes[boardNumber] != null)
     {
       //Todo add error message
-      res.sendFile(path.join(__dirname,'public','formHTML','index.html'));
+      res.sendFile(path.join(__dirname,'public','formHTML','index.ejs'));
       return;
     }
 
