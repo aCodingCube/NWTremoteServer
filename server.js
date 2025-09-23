@@ -36,6 +36,9 @@
   const mode = [0,0];
   const codes = [1,2];
 
+  codes[0] = null;
+  codes[1] = null;
+
   const timeout = [false,false];
   const TIMEOUT_DURATION = 1000;
 
@@ -116,7 +119,7 @@
   // post
   app.post("/adminInput",(req,res)=>{
     let boardNumber = req.body["board"];
-    codes[boardNumber] = 0;
+    codes[boardNumber] = null;
   });
 
   //* driving-mode control
@@ -150,27 +153,41 @@
 
   //* remote
   
-  // get (remoteAccess) -> user creating session and id //Todo Remove connection kicking
+  // get (remoteAccess) -> user creating session and id
   app.get("/remoteAccess",(req,res)=>{
+    // get board-number
     let boardNumber = parseInt(req.query["board"]);
+
+    // no board-number specified? -> show form
     if(boardNumber == undefined || Number.isNaN(boardNumber)) {
       res.sendFile(path.join(__dirname,'public','formHTML','index.html'));
       return;
     }
 
+    // board-number is not existing! -> error + back to form
     if(boards.includes(boardNumber) == false) // boardnumber not valid
       {
       res.redirect("/remoteAccess?error=boardNumber is not valid!");
       return;
     }
     
-    //Todo check if a device is already connected
+    // already a board connected? -> back to form
+    console.log("Test -174: " + codes[boardNumber]);
+    if(codes[boardNumber] != null)
+    {
+      //Todo add error message
+      res.sendFile(path.join(__dirname,'public','formHTML','index.html'));
+      return;
+    }
 
+    // generate session-id
     let secureRandom = crypto.randomInt(0,1000000);
     let secureCode = secureRandom.toString().padStart(6, "0");
-    codes[boardNumber] = secureCode;
-    res.cookie("AccessCode",secureCode,{httpOnly: true});
-    res.redirect("/remote?board=" + boardNumber);
+
+    codes[boardNumber] = secureCode; // store session-id on server
+    res.cookie("AccessCode",secureCode,{httpOnly: true}); // store session-id as cookie on client
+
+    res.redirect("/remote?board=" + boardNumber); // redirect to remote-control
   });
 
   // get (remote) -> user entering remote using session id
