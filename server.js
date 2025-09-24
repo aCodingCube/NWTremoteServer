@@ -166,23 +166,23 @@
     // no board-number specified? -> show form
     if(boardNumber == undefined || Number.isNaN(boardNumber)) {
       //res.sendFile(path.join(__dirname,'public','formHTML','index.ejs'));
-      res.render("formEJS/index.ejs");
+      res.render("formEJS/index.ejs",{message: "-remote access to car-"});
       return;
     }
 
     // board-number is not existing! -> error + back to form
     if(boards.includes(boardNumber) == false) // boardnumber not valid
       {
-      res.redirect("/remoteAccess?error=boardNumber is not valid!");
+      //res.redirect("/remoteAccess?error=boardNumber is not valid!");
+      res.render("formEJS/index.ejs",{message: "Board " + boardNumber +" does not exist!"});
       return;
     }
     
     // already a board connected? -> back to form
     if(codes[boardNumber] != null)
     {
-      //Todo add error message
       //res.sendFile(path.join(__dirname,'public','formHTML','index.ejs'));
-      res.render("formEJS/index.ejs");
+      res.render("formEJS/index.ejs",{message: "Another device is already connected!"});
       return;
     }
 
