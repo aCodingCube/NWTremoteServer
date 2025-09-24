@@ -20,6 +20,7 @@
   app.use(express.static(path.join(__dirname, 'public')));
 
   app.set("view engine", "ejs");
+  app.set("views",path.join(__dirname,'views'));
 
   app.use((req, res, next) => {
   res.setHeader(
@@ -116,7 +117,8 @@
   //* admin
   // get //Todo add option to see all connections
   app.get("/admin",(req,res)=>{
-    res.sendFile(path.join(__dirname,'public','adminHTML','index.ejs'));
+    //res.sendFile(path.join(__dirname,'public','adminHTML','index.ejs'));
+    res.render("adminEJS/index.ejs");
   })
   // post
   app.post("/adminInput",(req,res)=>{
@@ -134,7 +136,8 @@
       return;
     }
 
-    res.sendFile(path.join(__dirname,'public','controlHTML','index.ejs'))
+    //res.sendFile(path.join(__dirname,'public','controlHTML','index.ejs'))
+    res.render("controlEJS/index.ejs");
   })
 
   // post
@@ -162,7 +165,8 @@
 
     // no board-number specified? -> show form
     if(boardNumber == undefined || Number.isNaN(boardNumber)) {
-      res.sendFile(path.join(__dirname,'public','formHTML','index.ejs'));
+      //res.sendFile(path.join(__dirname,'public','formHTML','index.ejs'));
+      res.render("formEJS/index.ejs");
       return;
     }
 
@@ -177,7 +181,8 @@
     if(codes[boardNumber] != null)
     {
       //Todo add error message
-      res.sendFile(path.join(__dirname,'public','formHTML','index.ejs'));
+      //res.sendFile(path.join(__dirname,'public','formHTML','index.ejs'));
+      res.render("formEJS/index.ejs");
       return;
     }
 
@@ -205,7 +210,7 @@
       return;
     }
 
-    res.sendFile(path.join(__dirname,'public','remoteHTML','index.html'));
+    res.sendFile(path.join(__dirname,'public','remoteHTML','index.html')); // html only no ejs required
     return;
   });
 
