@@ -118,12 +118,18 @@
   // get //Todo add option to see all connections
   app.get("/admin",(req,res)=>{
     //res.sendFile(path.join(__dirname,'public','adminHTML','index.ejs'));
-    res.render("adminEJS/index.ejs");
+    res.render("adminEJS/index.ejs",
+      {infoLeft: "waiting for data...", infoRight: "waiting for data..."}
+    );
   })
   // post
   app.post("/adminInput",(req,res)=>{
     let boardNumber = req.body["board"];
     codes[boardNumber] = null;
+  });
+
+  app.get("/adminUpdate",(req,res)=>{
+    res.json({"idValue1": codes[0], "idValue2": codes[1]});
   });
 
   //* driving-mode control
