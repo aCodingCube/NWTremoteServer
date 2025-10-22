@@ -197,7 +197,7 @@
     let secureCode = secureRandom.toString().padStart(6, "0");
 
     codes[boardNumber] = secureCode; // store session-id on server
-    res.cookie("AccessCode",secureCode,{httpOnly: true}); // store session-id as cookie on client
+    res.cookie("AccessCode",secureCode,{httpOnly: true, secure: true, hostOnly: true}); // store session-id as cookie on client
 
     res.redirect("/remote?board=" + boardNumber); // redirect to remote-control
   });
