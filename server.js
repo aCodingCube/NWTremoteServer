@@ -113,7 +113,7 @@ app.get("/", (req, res) => {
 });
 
 //* admin
-// get //Todo add option to see all connections
+// get
 app.get("/admin", (req, res) => {
   //res.sendFile(path.join(__dirname,'public','adminHTML','index.ejs'));
   res.render("adminEJS/index.ejs",
@@ -164,12 +164,10 @@ app.post("/controlInput", (req, res) => {
 app.get("/remoteAccess", (req, res) => {
   // get board-number
   let boardNumber = parseInt(req.query["board"]);
-  console.log("Test -171 // boardnumber: " + boardNumber);
 
   // no board-number specified? -> show form
   if (boardNumber == undefined || Number.isNaN(boardNumber)) {
     //res.sendFile(path.join(__dirname,'public','formHTML','index.ejs'));
-    console.log("Test -176 // No boardnumber");
     res.render("formEJS/index.ejs", { message: "-remote access to car-" });
     return;
   }
@@ -190,14 +188,12 @@ app.get("/remoteAccess", (req, res) => {
   }
 
   // generate session-id
-  console.log("Test -198 generated session id!");
   let secureRandom = crypto.randomInt(0, 1000000);
   let secureCode = secureRandom.toString().padStart(6, "0");
 
   codes[boardNumber] = secureCode; // store session-id on server
-  res.cookie("AccessCode", secureCode, { httpOnly: true, secure: true }); // store session-id as cookie on client
+  res.cookie("AccessCode", secureCode, { httpOnly: true}); // store session-id as cookie on client
 
-  console.log("Test -205 // /remote?board=" + boardNumber);
   res.redirect("/remote?board=" + boardNumber); // redirect to remote-control
 });
 
@@ -213,7 +209,6 @@ app.get("/remote", (req, res) => {
     res.redirect("/remoteAccess");
     return;
   }
-  console.log("Test");
   res.sendFile(path.join(__dirname, 'public', 'remoteHTML', 'index.html')); // html only no ejs required
   return;
 });
