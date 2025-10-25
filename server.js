@@ -1,273 +1,267 @@
-  //? includes
-  const express = require("express");
-  const helmet = require("helmet");
-  const path = require("path");
-  const fs = require("fs");
-  const app = express();
-  var bodyParser = require("body-parser");
-  const cookieParser = require('cookie-parser');
-  const crypto = require("crypto");
-  const dns = require('node:dns');
-  const os = require('node:os');
+//? includes
+const express = require("express");
+const helmet = require("helmet");
+const path = require("path");
+const fs = require("fs");
+const app = express();
+var bodyParser = require("body-parser");
+const cookieParser = require('cookie-parser');
+const crypto = require("crypto");
+const dns = require('node:dns');
+const os = require('node:os');
 
-  //? setup / middleware
-  app.use(helmet());  
-  app.use(cookieParser());
-  // for getting data from client
-  app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({extended: true}));
+//? setup / middleware
+app.use(helmet());
+app.use(cookieParser());
+// for getting data from client
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-  app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public')));
 
-  app.set("view engine", "ejs");
-  app.set("views",path.join(__dirname,'views'));
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, 'views'));
 
-  app.use((req, res, next) => {
+app.use((req, res, next) => {
   res.setHeader(
     'Content-Security-Policy',
     "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' blob:; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:; connect-src 'self' blob:;"
   );
 
-    next();
-  });
+  next();
+});
 
-  //? variables
-  var appPort = 1337;
-  const boards = [0,1];
-  const data = [[1,2,3,4],[1,2,3,4]];
-  const possibleModes = [0,1,2];
-  const mode = [0,0];
-  const codes = [1,2];
+//? variables
+var appPort = 1337;
+const boards = [0, 1];
+const data = [[1, 2, 3, 4], [1, 2, 3, 4]];
+const possibleModes = [0, 1, 2];
+const mode = [0, 0];
+const codes = [1, 2];
 
-  codes[0] = null;
-  codes[1] = null;
+codes[0] = null;
+codes[1] = null;
 
-  const timeout = [false,false];
-  const TIMEOUT_DURATION = 1000;
+const timeout = [false, false];
+const TIMEOUT_DURATION = 1000;
 
-  //* IP-Stuff
-  const getLocalIP = () => {
-    let result = false;
-    const networkInterfaces = os.networkInterfaces();
-    // First, try to get the IP from the "Ethernet" interface (LAN)
-    if (networkInterfaces['Ethernet']) {
-      for (const networkInterface of networkInterfaces['Ethernet']) {
-        // Ensure we have a valid IPv4 address and it's not a loopback address
-        if (networkInterface.family === 'IPv4' && networkInterface.address && !networkInterface.address.startsWith('127.')) {
-          console.log("Ethernet IP found: ", networkInterface.address);
-          result = true;
-        }
+//* IP-Stuff
+const getLocalIP = () => {
+  let result = false;
+  const networkInterfaces = os.networkInterfaces();
+  // First, try to get the IP from the "Ethernet" interface (LAN)
+  if (networkInterfaces['Ethernet']) {
+    for (const networkInterface of networkInterfaces['Ethernet']) {
+      // Ensure we have a valid IPv4 address and it's not a loopback address
+      if (networkInterface.family === 'IPv4' && networkInterface.address && !networkInterface.address.startsWith('127.')) {
+        console.log("Ethernet IP found: ", networkInterface.address);
+        result = true;
       }
     }
-  
-    if (networkInterfaces['WLAN']) {
-      for (const networkInterface of networkInterfaces['WLAN']) {
-        // Ensure we have a valid IPv4 address and it's not a loopback address
-        if (networkInterface.family === 'IPv4' && networkInterface.address && !networkInterface.address.startsWith('127.')) {
-          console.log("WLAN IP found: ", networkInterface.address);
-          result = true;
-        }
+  }
+
+  if (networkInterfaces['WLAN']) {
+    for (const networkInterface of networkInterfaces['WLAN']) {
+      // Ensure we have a valid IPv4 address and it's not a loopback address
+      if (networkInterface.family === 'IPv4' && networkInterface.address && !networkInterface.address.startsWith('127.')) {
+        console.log("WLAN IP found: ", networkInterface.address);
+        result = true;
       }
     }
+  }
 
-    if (networkInterfaces['Ethernet 4']) {
-      for (const networkInterface of networkInterfaces['Ethernet 4']) {
-        // Ensure we have a valid IPv4 address and it's not a loopback address
-        if (networkInterface.family === 'IPv4' && networkInterface.address && !networkInterface.address.startsWith('127.')) {
-          console.log("Ethernet 4 IP found: ", networkInterface.address);
-          result = true;
-        }
+  if (networkInterfaces['Ethernet 4']) {
+    for (const networkInterface of networkInterfaces['Ethernet 4']) {
+      // Ensure we have a valid IPv4 address and it's not a loopback address
+      if (networkInterface.family === 'IPv4' && networkInterface.address && !networkInterface.address.startsWith('127.')) {
+        console.log("Ethernet 4 IP found: ", networkInterface.address);
+        result = true;
       }
     }
+  }
 
-    if(result == true)
-    {
-      return;
-    }
-
-    console.log("Network Interfaces:", networkInterfaces);
-    console.log("No IP was found!");
-    return null; // Only return null if **no valid IPs** were found
-  };
-
-  //* Timeout handle (if user using remote is going inactive)
-
-  const handleTimeout = (boardNumber) => {
-    timeout[boardNumber] = false;
-    
-    for(let i = 0; i < 4; i++)
-    {
-      data[boardNumber][i] = 0;
-    }
-  };
-
-  //* routing
-
-  //* main
-  app.get("/",(req,res)=>{
-      res.send(
-        "<h1>Main root! :)</h1>" + 
-        "<h2>-> use /remote for remote-control</h2>" + 
-        "<h2>-> use /data?board=n for recieving</h2>" + 
-        "<h2>-> use /modeControl?board=n to change the driving</h2>" + 
-        "<h2>-> use /admin to kick controlling devices</h2>"
-      );
-  });
-
-  //* admin
-  // get //Todo add option to see all connections
-  app.get("/admin",(req,res)=>{
-    //res.sendFile(path.join(__dirname,'public','adminHTML','index.ejs'));
-    res.render("adminEJS/index.ejs",
-      {infoLeft: "waiting for data...", infoRight: "waiting for data..."}
-    );
-  })
-  // post
-  app.post("/adminInput",(req,res)=>{
-    let boardNumber = req.body["board"];
-    codes[boardNumber] = null;
-  });
-
-  app.get("/adminUpdate",(req,res)=>{
-    res.json({"idValue1": codes[0], "idValue2": codes[1]});
-  });
-
-  //* driving-mode control
-  // get
-  app.get("/modeControl",(req,res)=>{
-    let boardNumber = parseInt(req.query["board"]);
-    if(boardNumber == undefined || Number.isNaN(boardNumber))
-    {
-      res.send("Missing board number!");
-      return;
-    }
-
-    //res.sendFile(path.join(__dirname,'public','controlHTML','index.ejs'))
-    res.render("controlEJS/index.ejs");
-  })
-
-  // post
-  app.post("/controlInput",(req,res)=>{
-    let boardNumber = parseInt(req.body["board"]);
-    let modeNumber = parseInt(req.body["mode"]);
-
-    if(!possibleModes.includes(modeNumber))
-    {
-      console.log("Error!!");
-      res.redirect("/modeControl?board=" + boardNumber +"&error=Invalid mode number. Valid are 0,1,2!");
-      return;
-    }
-    mode[boardNumber] = modeNumber;
-    res.redirect("/remote?board=" + boardNumber);
+  if (result == true) {
     return;
-  });
+  }
 
-  //* remote
-  
-  // get (remoteAccess) -> user creating session and id
-  app.get("/remoteAccess",(req,res)=>{
-    // get board-number
-    let boardNumber = parseInt(req.query["board"]);
+  console.log("Network Interfaces:", networkInterfaces);
+  console.log("No IP was found!");
+  return null; // Only return null if **no valid IPs** were found
+};
 
-    // no board-number specified? -> show form
-    if(boardNumber == undefined || Number.isNaN(boardNumber)) {
-      //res.sendFile(path.join(__dirname,'public','formHTML','index.ejs'));
-      res.render("formEJS/index.ejs",{message: "-remote access to car-"});
-      return;
-    }
+//* Timeout handle (if user using remote is going inactive)
 
-    // board-number is not existing! -> error + back to form
-    if(boards.includes(boardNumber) == false) // boardnumber not valid
-      {
-      //res.redirect("/remoteAccess?error=boardNumber is not valid!");
-      res.render("formEJS/index.ejs",{message: "Board " + boardNumber +" does not exist!"});
-      return;
-    }
-    
-    // already a board connected? -> back to form
-    if(codes[boardNumber] != null)
-    {
-      //res.sendFile(path.join(__dirname,'public','formHTML','index.ejs'));
-      res.render("formEJS/index.ejs",{message: "Another device is already connected!"});
-      return;
-    }
+const handleTimeout = (boardNumber) => {
+  timeout[boardNumber] = false;
 
-    // generate session-id
-    let secureRandom = crypto.randomInt(0,1000000);
-    let secureCode = secureRandom.toString().padStart(6, "0");
+  for (let i = 0; i < 4; i++) {
+    data[boardNumber][i] = 0;
+  }
+};
 
-    codes[boardNumber] = secureCode; // store session-id on server
-    res.cookie("AccessCode",secureCode,{httpOnly: true, secure: true, hostOnly: true}); // store session-id as cookie on client
+//* routing
 
-    res.redirect("/remote?board=" + boardNumber); // redirect to remote-control
-  });
+//* main
+app.get("/", (req, res) => {
+  res.send(
+    "<h1>Main root! :)</h1>" +
+    "<h2>-> use /remote for remote-control</h2>" +
+    "<h2>-> use /data?board=n for recieving</h2>" +
+    "<h2>-> use /modeControl?board=n to change the driving</h2>" +
+    "<h2>-> use /admin to kick controlling devices</h2>"
+  );
+});
 
-  // get (remote) -> user entering remote using session id
-  app.get("/remote",(req,res)=>{
-    let boardNumber = parseInt(req.query["board"]);
-    if(boardNumber == undefined || Number.isNaN(boardNumber)) {
-      res.redirect("/remoteAccess");
-      return;
-    }
+//* admin
+// get //Todo add option to see all connections
+app.get("/admin", (req, res) => {
+  //res.sendFile(path.join(__dirname,'public','adminHTML','index.ejs'));
+  res.render("adminEJS/index.ejs",
+    { infoLeft: "waiting for data...", infoRight: "waiting for data..." }
+  );
+})
+// post
+app.post("/adminInput", (req, res) => {
+  let boardNumber = req.body["board"];
+  codes[boardNumber] = null;
+});
 
-    if(req.cookies["AccessCode"] != codes[boardNumber]) 
-    {
-      res.redirect("/remoteAccess");
-      return;
-    }
+app.get("/adminUpdate", (req, res) => {
+  res.json({ "idValue1": codes[0], "idValue2": codes[1] });
+});
 
-    res.sendFile(path.join(__dirname,'public','remoteHTML','index.html')); // html only no ejs required
+//* driving-mode control
+// get
+app.get("/modeControl", (req, res) => {
+  let boardNumber = parseInt(req.query["board"]);
+  if (boardNumber == undefined || Number.isNaN(boardNumber)) {
+    res.send("Missing board number!");
     return;
-  });
+  }
 
-  // post -> recieving data from remote
-  app.post("/dataInput",(req,res)=>{
-    let boardNumber = req.body["board"];
-    if(req.cookies["AccessCode"] != codes[boardNumber]) 
-    {
-      res.json({ redirect: "/remoteAccess" });
-      return;
-    }
-    for(let i = 0; i < 4; i++)
-    {
-      data[boardNumber][i] = req.body["value" + (i+1)];
-    }
+  //res.sendFile(path.join(__dirname,'public','controlHTML','index.ejs'))
+  res.render("controlEJS/index.ejs");
+})
 
-    if(timeout[boardNumber])
-    {
-      clearTimeout(timeout[boardNumber]);
-    }
+// post
+app.post("/controlInput", (req, res) => {
+  let boardNumber = parseInt(req.body["board"]);
+  let modeNumber = parseInt(req.body["mode"]);
 
-    timeout[boardNumber] = setTimeout(() => handleTimeout(boardNumber),TIMEOUT_DURATION);
+  if (!possibleModes.includes(modeNumber)) {
+    console.log("Error!!");
+    res.redirect("/modeControl?board=" + boardNumber + "&error=Invalid mode number. Valid are 0,1,2!");
+    return;
+  }
+  mode[boardNumber] = modeNumber;
+  res.redirect("/remote?board=" + boardNumber);
+  return;
+});
 
-    res.end();
-  })
+//* remote
 
-  //* data
-  // get -> arduino requesting data
-  app.get("/data",(req,res)=>{
-    if(req.query["board"] == undefined) 
-    {
-      res.sendStatus(400); //Bad Request
-      return;
-    }
-    let boardNumber = req.query["board"];
-    res.json({"value1":data[boardNumber][0],"value2":data[boardNumber][1],"value3":data[boardNumber][2],"value4":data[boardNumber][3],"mode":mode[boardNumber]});
-  });
+// get (remoteAccess) -> user creating session and id
+app.get("/remoteAccess", (req, res) => {
+  // get board-number
+  let boardNumber = parseInt(req.query["board"]);
+  console.log("Test -171 // boardnumber: " + boardNumber);
 
-  //* 404
-  // get 404 page
-  app.all("*",(req,res)=>{
-      res.send("<h1>Error: 404 Page not found!</h1>");
-  });
+  // no board-number specified? -> show form
+  if (boardNumber == undefined || Number.isNaN(boardNumber)) {
+    //res.sendFile(path.join(__dirname,'public','formHTML','index.ejs'));
+    console.log("Test -176 // No boardnumber");
+    res.render("formEJS/index.ejs", { message: "-remote access to car-" });
+    return;
+  }
 
-  //? start server
-  app.listen(appPort);
-  console.log("---------------------------------------");
-  console.log("Server is listening on port " + appPort);
-  console.log("-> use /remote for remote-control");
-  console.log("-> use /data?board=n for recieving data");
-  console.log("-> use /modeControl?board=n to change the driving mode");
-  console.log("-> use /admin to kick controlling devices");
-  console.log("---------------------------------------");
-  getLocalIP();
+  // board-number is not existing! -> error + back to form
+  if (boards.includes(boardNumber) == false) // boardnumber not valid
+  {
+    //res.redirect("/remoteAccess?error=boardNumber is not valid!");
+    res.render("formEJS/index.ejs", { message: "Board " + boardNumber + " does not exist!" });
+    return;
+  }
+
+  // already a board connected? -> back to form
+  if (codes[boardNumber] != null) {
+    //res.sendFile(path.join(__dirname,'public','formHTML','index.ejs'));
+    res.render("formEJS/index.ejs", { message: "Another device is already connected!" });
+    return;
+  }
+
+  // generate session-id
+  console.log("Test -198 generated session id!");
+  let secureRandom = crypto.randomInt(0, 1000000);
+  let secureCode = secureRandom.toString().padStart(6, "0");
+
+  codes[boardNumber] = secureCode; // store session-id on server
+  res.cookie("AccessCode", secureCode, { httpOnly: true, secure: true }); // store session-id as cookie on client
+
+  console.log("Test -205 // /remote?board=" + boardNumber);
+  res.redirect("/remote?board=" + boardNumber); // redirect to remote-control
+});
+
+// get (remote) -> user entering remote using session id
+app.get("/remote", (req, res) => {
+  let boardNumber = parseInt(req.query["board"]);
+  if (boardNumber == undefined || Number.isNaN(boardNumber)) {
+    res.redirect("/remoteAccess");
+    return;
+  }
+
+  if (req.cookies["AccessCode"] != codes[boardNumber]) {
+    res.redirect("/remoteAccess");
+    return;
+  }
+  console.log("Test");
+  res.sendFile(path.join(__dirname, 'public', 'remoteHTML', 'index.html')); // html only no ejs required
+  return;
+});
+
+// post -> recieving data from remote
+app.post("/dataInput", (req, res) => {
+  let boardNumber = req.body["board"];
+  if (req.cookies["AccessCode"] != codes[boardNumber]) {
+    res.json({ redirect: "/remoteAccess" });
+    return;
+  }
+  for (let i = 0; i < 4; i++) {
+    data[boardNumber][i] = req.body["value" + (i + 1)];
+  }
+
+  if (timeout[boardNumber]) {
+    clearTimeout(timeout[boardNumber]);
+  }
+
+  timeout[boardNumber] = setTimeout(() => handleTimeout(boardNumber), TIMEOUT_DURATION);
+
+  res.end();
+})
+
+//* data
+// get -> arduino requesting data
+app.get("/data", (req, res) => {
+  if (req.query["board"] == undefined) {
+    res.sendStatus(400); //Bad Request
+    return;
+  }
+  let boardNumber = req.query["board"];
+  res.json({ "value1": data[boardNumber][0], "value2": data[boardNumber][1], "value3": data[boardNumber][2], "value4": data[boardNumber][3], "mode": mode[boardNumber] });
+});
+
+//* 404
+// get 404 page
+app.all("*", (req, res) => {
+  res.send("<h1>Error: 404 Page not found!</h1>");
+});
+
+//? start server
+app.listen(appPort);
+console.log("---------------------------------------");
+console.log("Server is listening on port " + appPort);
+console.log("-> use /remote for remote-control");
+console.log("-> use /data?board=n for recieving data");
+console.log("-> use /modeControl?board=n to change the driving mode");
+console.log("-> use /admin to kick controlling devices");
+console.log("---------------------------------------");
+getLocalIP();
