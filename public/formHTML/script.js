@@ -42,6 +42,7 @@ function submitBoardNumber()
     alert("Tap on the screen for entering fullscreen!");
     
     let pageURL = new URL(window.location.href);
+    pageURL.search = "";
     pageURL.searchParams.append('board',number);
     window.location.replace(pageURL);
 }

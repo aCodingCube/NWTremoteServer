@@ -147,12 +147,12 @@ app.get("/modeControl", (req, res) => {
 app.post("/controlInput", (req, res) => {
   let boardNumber = parseInt(req.body["board"]);
   let modeNumber = parseInt(req.body["mode"]);
-
-  if (!possibleModes.includes(modeNumber)) {
-    console.log("Error!!");
-    res.redirect("/modeControl?board=" + boardNumber + "&error=Invalid mode number. Valid are 0,1,2!");
-    return;
-  }
+  console.log("Test -150 entered mode control!");
+  // if (!possibleModes.includes(modeNumber)) {
+  //   console.log("Error!!");
+  //   res.redirect("/modeControl?board=" + boardNumber + "&error=Invalid mode number. Valid are 0,1,2!");
+  //   return;
+  // }
   mode[boardNumber] = modeNumber;
   res.redirect("/remote?board=" + boardNumber);
   return;
