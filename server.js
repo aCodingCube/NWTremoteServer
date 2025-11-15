@@ -131,31 +131,13 @@ app.get("/adminUpdate", (req, res) => {
 });
 
 //* driving-mode control
-// get
-app.get("/modeControl", (req, res) => {
-  let boardNumber = parseInt(req.query["board"]);
-  if (boardNumber == undefined || Number.isNaN(boardNumber)) {
-    res.send("Missing board number!");
-    return;
-  }
 
-  //res.sendFile(path.join(__dirname,'public','controlHTML','index.ejs'))
-  res.render("controlEJS/index.ejs");
-})
+app.get("/getDrivingMode", (req,res) => {
+  // Todo add logic!
+});
 
-// post
-app.post("/controlInput", (req, res) => {
-  let boardNumber = parseInt(req.body["board"]);
-  let modeNumber = parseInt(req.body["mode"]);
-  console.log("Test -150 entered mode control!");
-  // if (!possibleModes.includes(modeNumber)) {
-  //   console.log("Error!!");
-  //   res.redirect("/modeControl?board=" + boardNumber + "&error=Invalid mode number. Valid are 0,1,2!");
-  //   return;
-  // }
-  mode[boardNumber] = modeNumber;
-  res.redirect("/remote?board=" + boardNumber);
-  return;
+app.post("/modeControl", (req, res) => {
+  // Todo add logic!
 });
 
 //* remote
