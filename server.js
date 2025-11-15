@@ -36,7 +36,7 @@ var appPort = 1337;
 const boards = [0, 1];
 const data = [[1, 2, 3, 4], [1, 2, 3, 4]];
 const possibleModes = [0, 1, 2];
-const mode = [0, 0];
+const mode = [5, 2];
 const codes = [1, 2];
 
 codes[0] = null;
@@ -132,12 +132,22 @@ app.get("/adminUpdate", (req, res) => {
 
 //* driving-mode control
 
-app.get("/getDrivingMode", (req,res) => {
-  // Todo add logic!
+app.post("/getDrivingMode", (req,res) => {
+  let boardNumber = req.body.board;
+  res.json({"value": mode[boardNumber]});
 });
 
 app.post("/modeControl", (req, res) => {
-  // Todo add logic!
+  let boardNumber = req.body.board;
+  if(mode[boardNumber] == 0)
+  {
+    mode[boardNumber] = 1;
+  }
+  else
+  {
+    mode[boardNumber] = 0;
+  }
+  res.json({"value": mode[boardNumber]});
 });
 
 //* remote

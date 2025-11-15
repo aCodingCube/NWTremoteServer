@@ -11,7 +11,7 @@ let returnText;
 let vertDrawSwitch;
 let modeSwitchBtn;
 
-function setup() {
+async function setup() {
   createCanvas(windowWidth, windowHeight);
   background("#d62828"); // dunkel blau
 
@@ -28,9 +28,8 @@ function setup() {
 
   modeSwitchBtn = createButton("Driving mode!");
   modeSwitchBtn.mousePressed(() => {
-    console.log("Mode button pressed!");
-    alert("Driving-mode Btn pressed!");
-  })
+    switchDrivingMode();
+  });
 
   modeSwitchBtn.style('font-weight','bold');
   modeSwitchBtn.style('font-size', (windowHeight*0.04) + 'px');
@@ -80,6 +79,10 @@ function setup() {
   returnBtn.hide();
 
   vertDrawSwitch = true;
+
+  const mode = await updateDrivingMode();
+  let text = mode == 0 ? "normal" : "diagonal";
+  modeSwitchBtn.html(text);
 }
 
 function draw() {
@@ -190,9 +193,13 @@ function mousePressed() {
 }
 
 // resize everything on resive (fullscreen)
-function windowResized() {
+async function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
   scaleButtonText(modeSwitchBtn);
+  const mode = await updateDrivingMode();
+  let text = mode == 0 ? "normal" : "diagonal";
+  modeSwitchBtn.html(text);
+
 
   if(windowHeight > windowWidth)
   {
@@ -264,4 +271,40 @@ function scaleButtonText(btn) {
   // Scale relative to window height (your method)
   const size = windowHeight * 0.1;
   btn.style('font-size', size + 'px');
+}
+
+function updateDrivingMode()
+{
+  const urlParams = new URLSearchParams(window.location.search);
+  const boardNumber = urlParams.get("board");
+
+  return fetch("/getDrivingMode", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      board: boardNumber
+    })
+  })
+  .then(response => {return response.json()})
+  .then(data => data.value);
+}
+
+function switchDrivingMode()
+{
+  const urlParams = new URLSearchParams(window.location.search);
+  const boardNumber = urlParams.get("board");
+  console.log(boardNumber);
+
+  fetch("/modeControl", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      board: boardNumber
+    })
+  })
+  .then(response => {return response.json()})
+  .then(data => {
+    let text = data.value == 0 ? "normal" : "diagonal";
+    modeSwitchBtn.html(text);
+  });
 }
