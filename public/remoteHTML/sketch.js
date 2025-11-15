@@ -55,6 +55,20 @@ function setup() {
   returnBtn = createButton("Return to access-point!");
   returnBtn.mousePressed(() => {
     remove();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const boardNumber = urlParams.get("board");
+
+    fetch("/adminInput", {
+    method: "POST",
+    body: JSON.stringify({
+      board: boardNumber
+    }),
+    headers: {
+      "Content-type": "application/json; charset=UTF-8"
+    }
+    });
+
     setTimeout(()=>{window.location.replace("/remoteAccess");}, 50);
     fullscreen(false);
   });
