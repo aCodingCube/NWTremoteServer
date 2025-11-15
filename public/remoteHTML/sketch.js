@@ -9,7 +9,7 @@ let circleR, circleBackgroundMod, maxTouchR;
 let returnBtn;
 let returnText;
 let vertDrawSwitch;
-let modeBtn;
+let modeSwitchBtn;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -26,20 +26,20 @@ function setup() {
   circleBackgroundMod = windowHeight / 8;
   maxTouchR = windowWidth / 7;
 
-  modeBtn = createButton("Change driving mode!");
-  modeBtn.mousePressed(() => {
-    remove();
-    let params = new URLSearchParams(window.location.search);
-    let boardNumber = params.get("board");
-    setTimeout(()=>{window.location.replace("/modeControl?board=" + boardNumber);}, 50);
-    fullscreen(false);
-  });
-  modeBtn.style('font-weight','bold');
-  modeBtn.style('background-color', '#003049');
-  modeBtn.style('color', '#EAEAEA');
-  modeBtn.style('border', 'none');
-  modeBtn.style('cursor', 'pointer');
-  modeBtn.hide();
+  modeSwitchBtn = createButton("Driving mode!");
+  modeSwitchBtn.mousePressed(() => {
+    console.log("Mode button pressed!");
+    alert("Driving-mode Btn pressed!");
+  })
+
+  modeSwitchBtn.style('font-weight','bold');
+  modeSwitchBtn.style('font-size', (windowHeight*0.04) + 'px');
+  modeSwitchBtn.style('background-color', '#a2006fff');
+  modeSwitchBtn.style('color', '#EAEAEA');
+  modeSwitchBtn.style('border', 'none');
+  modeSwitchBtn.style('cursor', 'pointer');
+  scaleButtonText(modeSwitchBtn);
+  modeSwitchBtn.hide();
 
 
   returnText = createDiv("Please turn the device!");
@@ -80,12 +80,7 @@ function draw() {
     windowResized();
     vertDrawSwitch = false;
 
-    modeBtn.show();
-    modeBtn.size(windowWidth /2, windowHeight/8);
-    modeBtn.position(width / 2 - modeBtn.width / 2, height * 0.1);
-    modeBtn.style('font-size', '6vw');
-    modeBtn.style('border-radius', '8px');
-    modeBtn.style('text-align','center');
+    modeSwitchBtn.hide();
 
     returnText.show();
     returnText.style('font-size', '12vw');
@@ -108,9 +103,15 @@ function draw() {
   vertDrawSwitch = true;
   returnText.hide();
   returnBtn.hide();
-  modeBtn.hide();
 
   background("#003049"); // dunkel blau
+
+  modeSwitchBtn.show();
+  modeSwitchBtn.size(windowWidth /2, windowHeight/8);
+  modeSwitchBtn.position((windowWidth / 2) - (modeSwitchBtn.width / 2), height * 0.1);
+  modeSwitchBtn.style('border-radius', '8px');
+  modeSwitchBtn.style('text-align','center');
+
 
   // background circles
   fill("#C0D6DF"); // hell-blau
@@ -177,6 +178,7 @@ function mousePressed() {
 // resize everything on resive (fullscreen)
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
+  scaleButtonText(modeSwitchBtn);
 
   if(windowHeight > windowWidth)
   {
@@ -242,4 +244,10 @@ function fetchDataToServer(value1X,value1Y,value2X,value2Y)
       }
   })
   .catch(error => console.error("Fehler beim Senden des Requests:", error));
+}
+
+function scaleButtonText(btn) {
+  // Scale relative to window height (your method)
+  const size = windowHeight * 0.1;
+  btn.style('font-size', size + 'px');
 }
