@@ -175,8 +175,8 @@ function draw() {
     secCircle.y = secCircleStart.y;
   }
 
-  fetchDataToServer(primCircle.x - primCircleStart.x, primCircle.y - primCircleStart.y,
-    secCircle.x - secCircleStart.x, secCircle.y - secCircleStart.y
+  fetchDataToServer(normSigned(primCircle.x - primCircleStart.x), normSigned(primCircle.y - primCircleStart.y),
+    normSigned(secCircle.x - secCircleStart.x), normSigned(secCircle.y - secCircleStart.y)
   );
 
 }
@@ -232,10 +232,10 @@ function fetchDataToServer(value1X,value1Y,value2X,value2Y)
   const params = new URLSearchParams(window.location.search);
   const boardNumber = params.get('board');
 
-  value1X = round(value1X);
-  value1Y = round(value1Y);
-  value2X = round(value2X);
-  value2Y = round(value2Y);
+  value1X = round4(value1X);
+  value1Y = round4(value1Y);
+  value2X = round4(value2X);
+  value2Y = round4(value2Y) * -1;
 
   fetch("/dataInput",{
     method: "POST",
@@ -307,4 +307,12 @@ function switchDrivingMode()
     let text = data.value == 0 ? "normal" : "diagonal";
     modeSwitchBtn.html(text);
   });
+}
+
+function normSigned(value) {
+  return value / maxTouchR;   // result = -1 → +1
+}
+
+function round4(v) {
+  return Number(v.toFixed(4));  // 4 decimal digits
 }
