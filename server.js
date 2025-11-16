@@ -233,7 +233,7 @@ app.get("/data", (req, res) => {
     return;
   }
   let boardNumber = req.query["board"];
-  res.json({ "value1": data[boardNumber][0], "value2": data[boardNumber][1], "value3": data[boardNumber][2], "value4": data[boardNumber][3], "mode": mode[boardNumber] });
+  res.status(200).json({ "value1": data[boardNumber][0], "value2": data[boardNumber][1], "value3": data[boardNumber][2], "value4": data[boardNumber][3], "mode": mode[boardNumber] });
 });
 
 //* 404
