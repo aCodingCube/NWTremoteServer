@@ -36,7 +36,7 @@ var appPort = 1337;
 const boards = [0, 1];
 const data = [[1, 2, 3, 4], [1, 2, 3, 4]];
 const possibleModes = [0, 1, 2];
-const mode = [5, 2];
+const mode = [5, 5];
 const codes = [1, 2];
 
 codes[0] = null;
