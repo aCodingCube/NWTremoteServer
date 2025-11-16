@@ -34,9 +34,9 @@ app.use((req, res, next) => {
 //? variables
 var appPort = 1337;
 const boards = [0, 1];
-const data = [[1, 2, 3, 4], [1, 2, 3, 4]];
+const data = [[5, 6, 7, 8], [5, 6, 7, 8]];
 const possibleModes = [0, 1, 2];
-const mode = [5, 5];
+const mode = [9, 9];
 const codes = [1, 2];
 
 codes[0] = null;
@@ -233,6 +233,7 @@ app.get("/data", (req, res) => {
     return;
   }
   let boardNumber = req.query["board"];
+  console.log(`[${new Date().toISOString()}] Car requested data, board: ${req.query["board"]}`);
   res.status(200).json({ "value1": data[boardNumber][0], "value2": data[boardNumber][1], "value3": data[boardNumber][2], "value4": data[boardNumber][3], "mode": mode[boardNumber] });
 });
 
